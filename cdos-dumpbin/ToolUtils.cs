@@ -21,9 +21,9 @@ namespace cdos_dumpbin {
                 FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
                 foreach (FileSystemInfo fsinfo in fsinfos){
                     if (fsinfo is DirectoryInfo) {
-                        generateFilesAbsolutePath(fsinfo.FullName, endsWith, ref res);
-                    } else if (strIsEndsWith(fsinfo.FullName, endsWith)) {
-                        res.Add(fsinfo.FullName);
+                        generateFilesAbsolutePath(fsinfo.FullName.ToLower(), endsWith, ref res);
+                    } else if (strIsEndsWith(fsinfo.FullName.ToLower(), endsWith)) {
+                        res.Add(fsinfo.FullName.ToLower());
                     }
                 }
             } catch (Exception e) {
@@ -41,9 +41,9 @@ namespace cdos_dumpbin {
                 FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
                 foreach (FileSystemInfo fsinfo in fsinfos) {
                     if (fsinfo is DirectoryInfo) {
-                        generateFilesPath(fsinfo.FullName, endsWith, ref res);
-                    } else if (strIsEndsWith(fsinfo.Name, endsWith)) {
-                        res.Add(fsinfo.Name);
+                        generateFilesPath(fsinfo.FullName.ToLower(), endsWith, ref res);
+                    } else if (strIsEndsWith(fsinfo.Name.ToLower(), endsWith)) {
+                        res.Add(fsinfo.Name.ToLower());
                     }
                 }
             } catch (Exception e) {
@@ -120,8 +120,9 @@ namespace cdos_dumpbin {
                 string args = "/DEPENDENTS";
                 int end = i + Math.Min(files.Count-i, 50); //每次最多分析50个模块
                 for ( ; i < end; ++i) {
-                    if (!res.Keys.Contains(files[i].Substring(files[i].LastIndexOf('\\') + 1))) {
-                        args += (" \"" + files[i] + "\"");
+                    string file = files[i].ToLower();
+                    if (!res.Keys.Contains(file.Substring(file.LastIndexOf('\\') + 1))) {
+                        args += (" \"" + file + "\"");
                     }
                 }
                 //合并两个Dictionary
@@ -162,16 +163,14 @@ namespace cdos_dumpbin {
         private static Dictionary<string, List<string>> getRecognizedDLL(Process process) {
             Dictionary<string, List<string>> res = new Dictionary<string,List<string>>();
             for (string name = ""; !process.StandardOutput.EndOfStream; ) {
-                string line = process.StandardOutput.ReadLine().Trim();
-                if (line.StartsWith("Dump")) {
+                string line = process.StandardOutput.ReadLine().Trim().ToLower();
+                if (line.StartsWith("dump")) {
                     //获取被分析文件名称
                     name = line.Substring(line.LastIndexOf('\\') + 1);
                     if (!res.ContainsKey(name)) {
-                        //Console.WriteLine(name);
                         res.Add(name, new List<string>());
                     }
                 } else if (line.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) {
-                    //Console.WriteLine(line);
                     res[name].Add(line);
                 }
             }
