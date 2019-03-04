@@ -217,8 +217,8 @@ namespace cdos_dumpbin {
         /// </summary>
         /// <param name="path"></param>
         /// <param name="data"></param>
-        public static void writeToFile(string path, string data) {
-            using (StreamWriter sw = new StreamWriter(path, true, Encoding.UTF8)) {
+        public static void writeToFile(string path, string data, bool erase = true) {
+            using (StreamWriter sw = new StreamWriter(path, erase, Encoding.UTF8)) {
                 sw.Write(data);
             }
         }

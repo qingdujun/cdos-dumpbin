@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfUtils.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="DLLsHelper.cs" />
     <Compile Include="Start.cs" />
