@@ -1,5 +1,0 @@
-c:\users\qingdujun\documents\visual studio 2010\Projects\cdos-dumpbin\cdos-dumpbin\bin\Debug\cdos-dumpbin.exe
-c:\users\qingdujun\documents\visual studio 2010\Projects\cdos-dumpbin\cdos-dumpbin\bin\Debug\cdos-dumpbin.pdb
-c:\users\qingdujun\documents\visual studio 2010\Projects\cdos-dumpbin\cdos-dumpbin\obj\x86\Debug\ResolveAssemblyReference.cache
-c:\users\qingdujun\documents\visual studio 2010\Projects\cdos-dumpbin\cdos-dumpbin\obj\x86\Debug\cdos-dumpbin.exe
-c:\users\qingdujun\documents\visual studio 2010\Projects\cdos-dumpbin\cdos-dumpbin\obj\x86\Debug\cdos-dumpbin.pdb
