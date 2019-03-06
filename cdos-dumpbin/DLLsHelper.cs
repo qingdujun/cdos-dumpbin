@@ -18,9 +18,11 @@ namespace cdos_dumpbin{
         /// <param name="cmpFolder"></param>
         /// <param name="contain"></param>
         /// <returns></returns>
-        public static List<string> getIntersectDependency(string baseFolder, string cmpFolder, bool contain = false) {
-            var baseUnion = ToolUtils.getValuesListUnion(ToolUtils.getDLLDependenciesNoSelf(baseFolder, new List<string>{".exe", ".dll"}));
-            var cmpUnion = ToolUtils.getValuesListUnion(ToolUtils.getDLLDependenciesNoSelf(cmpFolder, new List<string> { ".exe", ".dll" }));
+        public static List<string> getIntersect(string baseFolder, string cmpFolder) {
+            var baseUnion = ToolUtils.getValuesUnion(
+                ToolUtils.getDependenciesNoSelf(baseFolder, new HashSet<string>{".exe", ".dll"}));
+            var cmpUnion = ToolUtils.getValuesUnion(
+                ToolUtils.getDependenciesNoSelf(cmpFolder, new HashSet<string> { ".exe", ".dll" }));
             return baseUnion.Intersect(cmpUnion).ToList<string>();
         }
         /// <summary>
@@ -30,9 +32,11 @@ namespace cdos_dumpbin{
         /// <param name="cmpFolder"></param>
         /// <param name="contain"></param>
         /// <returns></returns>
-        public static List<string> getExceptDependency(string baseFolder, string cmpFolder, bool contain = false) {
-            var baseUnion = ToolUtils.getValuesListUnion(ToolUtils.getDLLDependenciesNoSelf(baseFolder, new List<string> { ".exe", ".dll" }));
-            var cmpUnion = ToolUtils.getValuesListUnion(ToolUtils.getDLLDependenciesNoSelf(cmpFolder, new List<string> { ".exe", ".dll" }));
+        public static List<string> getExcept(string baseFolder, string cmpFolder) {
+            var baseUnion = ToolUtils.getValuesUnion(
+                ToolUtils.getDependenciesNoSelf(baseFolder, new HashSet<string> { ".exe", ".dll" }));
+            var cmpUnion = ToolUtils.getValuesUnion(
+                ToolUtils.getDependenciesNoSelf(cmpFolder, new HashSet<string> { ".exe", ".dll" }));
             return baseUnion.Except(cmpUnion).ToList<string>();
         }
         /// <summary>
@@ -42,9 +46,11 @@ namespace cdos_dumpbin{
         /// <param name="cmpFolder"></param>
         /// <param name="contain"></param>
         /// <returns></returns>
-        public static List<string> getUnionDependency(string baseFolder, string cmpFolder, bool contain = false) {
-            var baseUnion = ToolUtils.getValuesListUnion(ToolUtils.getDLLDependenciesNoSelf(baseFolder, new List<string> { ".exe", ".dll" }));
-            var cmpUnion = ToolUtils.getValuesListUnion(ToolUtils.getDLLDependenciesNoSelf(cmpFolder, new List<string> { ".exe", ".dll" }));
+        public static List<string> getUnion(string baseFolder, string cmpFolder) {
+            var baseUnion = ToolUtils.getValuesUnion(
+                ToolUtils.getDependenciesNoSelf(baseFolder, new HashSet<string> { ".exe", ".dll" }));
+            var cmpUnion = ToolUtils.getValuesUnion(
+                ToolUtils.getDependenciesNoSelf(cmpFolder, new HashSet<string> { ".exe", ".dll" }));
             return baseUnion.Union(cmpUnion).ToList<string>();
         }
        

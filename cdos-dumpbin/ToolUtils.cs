@@ -15,39 +15,101 @@ namespace cdos_dumpbin {
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="endsWith"></param>
-        private static void generateFilesAbsolutePath(string folder, List<string> endsWith, ref List<string> res){
+        private static void generateFilesAbsolutePath(string folder, HashSet<string> suffix, ref List<string> res) {
             try {
                 DirectoryInfo dir = new DirectoryInfo(folder);
                 FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
                 foreach (FileSystemInfo fsinfo in fsinfos){
                     if (fsinfo is DirectoryInfo) {
-                        generateFilesAbsolutePath(fsinfo.FullName.ToLower(), endsWith, ref res);
-                    } else if (strIsEndsWith(fsinfo.FullName.ToLower(), endsWith)) {
+                        generateFilesAbsolutePath(fsinfo.FullName.ToLower(), suffix, ref res);
+                    } else if (isEndsWith(fsinfo.FullName.ToLower(), suffix)) {
                         res.Add(fsinfo.FullName.ToLower());
                     }
                 }
             } catch (Exception e) {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
         }
         /// <summary>
-        /// 生成folder路径下，所有后缀为endsWith文件相对路径
+        /// 生成绝对路径，返回HashSet
         /// </summary>
         /// <param name="folder"></param>
-        /// <param name="endsWith"></param>
-        private static void generateFilesPath(string folder, List<string> endsWith, ref List<string> res) {
+        /// <param name="suffix"></param>
+        /// <param name="res"></param>
+        private static void generateFilesAbsolutePath(string folder, HashSet<string> suffix, ref HashSet<string> res) {
             try {
                 DirectoryInfo dir = new DirectoryInfo(folder);
                 FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
                 foreach (FileSystemInfo fsinfo in fsinfos) {
                     if (fsinfo is DirectoryInfo) {
-                        generateFilesPath(fsinfo.FullName.ToLower(), endsWith, ref res);
-                    } else if (strIsEndsWith(fsinfo.Name.ToLower(), endsWith)) {
+                        generateFilesAbsolutePath(fsinfo.FullName.ToLower(), suffix, ref res);
+                    } else if (isEndsWith(fsinfo.FullName.ToLower(), suffix)) {
+                        res.Add(fsinfo.FullName.ToLower());
+                    }
+                }
+            } catch (Exception e) {
+                //Console.WriteLine(e.ToString());
+            }
+        }
+        /// <summary>
+        /// 生成绝对路径，返回map
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="endsWith"></param>
+        /// <param name="res"></param>
+        private static void generateFilesAbsolutePath(string folder, HashSet<string> suffix, ref Dictionary<string, string> res) {
+            try {
+                DirectoryInfo dir = new DirectoryInfo(folder);
+                FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
+                foreach (FileSystemInfo fsinfo in fsinfos) {
+                    if (fsinfo is DirectoryInfo) {
+                        generateFilesAbsolutePath(fsinfo.FullName.ToLower(), suffix, ref res);
+                    } else if (isEndsWith(fsinfo.FullName.ToLower(), suffix)) {
+                        res[fsinfo.Name.ToLower()] = fsinfo.FullName.ToLower();
+                    }
+                }
+            } catch (Exception e) {
+                //Console.WriteLine(e.ToString());
+            }
+        }
+        /// <summary>
+        /// 生成folder路径下，所有后缀为endsWith文件名
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="endsWith"></param>
+        private static void generateFilesName(string folder, HashSet<string> suffix, ref List<string> res) {
+            try {
+                DirectoryInfo dir = new DirectoryInfo(folder);
+                FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
+                foreach (FileSystemInfo fsinfo in fsinfos) {
+                    if (fsinfo is DirectoryInfo) {
+                        generateFilesName(fsinfo.FullName.ToLower(), suffix, ref res);
+                    } else if (isEndsWith(fsinfo.Name.ToLower(), suffix)) {
                         res.Add(fsinfo.Name.ToLower());
                     }
                 }
             } catch (Exception e) {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
+            }
+        }
+        /// <summary>
+        /// 生成folder路径下，所有后缀为endsWith文件名,返回HashSet
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="endsWith"></param>
+        private static void generateFilesName(string folder, HashSet<string> suffix, ref HashSet<string> res) {
+            try {
+                DirectoryInfo dir = new DirectoryInfo(folder);
+                FileSystemInfo[] fsinfos = dir.GetFileSystemInfos();
+                foreach (FileSystemInfo fsinfo in fsinfos) {
+                    if (fsinfo is DirectoryInfo) {
+                        generateFilesName(fsinfo.FullName.ToLower(), suffix, ref res);
+                    } else if (isEndsWith(fsinfo.Name.ToLower(), suffix)) {
+                        res.Add(fsinfo.Name.ToLower());
+                    }
+                }
+            } catch (Exception e) {
+                //Console.WriteLine(e.ToString());
             }
         }
         /// <summary>
@@ -56,20 +118,53 @@ namespace cdos_dumpbin {
         /// <param name="folder"></param>
         /// <param name="endsWith"></param>
         /// <returns></returns>
-        public static List<string> getFilesAbsolutePath(string folder, List<string> endsWith) {
+        public static List<string> getFilesAbsolutePath(string folder, HashSet<string> suffix) {
             List<string> res = new List<string>();
-            generateFilesAbsolutePath(folder, endsWith, ref res);
+            generateFilesAbsolutePath(folder, suffix, ref res);
             return res;
         }
         /// <summary>
-        /// 获取folder路径下，所有后缀为endsWith文件相对路径
+        /// 获取去重的绝对路径
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
+        public static HashSet<string> getFilterAbsolutePath(string folder, HashSet<string> suffix) {
+            HashSet<string> res = new HashSet<string>();
+            generateFilesAbsolutePath(folder, suffix, ref res);
+            return res;
+        }
+        /// <summary>
+        /// 生成<k,v>格式路径
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> getMapAbsolutePath(string folder, HashSet<string> suffix) {
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            generateFilesAbsolutePath(folder, suffix, ref res);
+            return res;
+        }
+        /// <summary>
+        /// 获取folder路径下，所有后缀为endsWith文件名
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="endsWith"></param>
         /// <returns></returns>
-        public static List<string> getFilesPath(string folder, List<string> endsWith) {
+        public static List<string> getFilesName(string folder, HashSet<string> suffix) {
             List<string> res = new List<string>();
-            generateFilesPath(folder, endsWith, ref res);
+            generateFilesName(folder, suffix, ref res);
+            return res;
+        }
+        /// <summary>
+        /// 返回去重文件名
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
+        public static HashSet<string> getFilterName(string folder, HashSet<string> suffix) {
+            HashSet<string> res = new HashSet<string>();
+            generateFilesName(folder, suffix, ref res);
             return res;
         }
         /// <summary>
@@ -78,8 +173,8 @@ namespace cdos_dumpbin {
         /// <param name="str"></param>
         /// <param name="endsWith"></param>
         /// <returns></returns>
-        public static bool strIsEndsWith(string str, List<string> endsWith) {
-            foreach (string s in endsWith) {
+        public static bool isEndsWith(string str, HashSet<string> suffix) {
+            foreach (string s in suffix) {
                 if (str.EndsWith(s, StringComparison.OrdinalIgnoreCase)) {
                     return true;
                 }
@@ -91,7 +186,7 @@ namespace cdos_dumpbin {
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string getDumpbinPath() {
+        public static string getToolsPath() {
             string line = "";
             try {
                 using (StreamReader sr = new StreamReader("./config.ini", Encoding.Default)) {
@@ -112,10 +207,9 @@ namespace cdos_dumpbin {
         /// <param name="folder"></param>
         /// <param name="endsWith"></param>
         /// <returns></returns>
-        public static Dictionary<string, List<string>> getDLLDependencies(string folder, List<string> endsWith) {
-            Dictionary<string, List<string>> res = new Dictionary<string, List<string>>();
-            //List去重复
-            List<string> files = new List<string>(new HashSet<string>(getFilesAbsolutePath(folder, endsWith)));
+        public static Dictionary<string, HashSet<string>> getDependencies(string folder, HashSet<string> suffix) {
+            Dictionary<string, HashSet<string>> res = new Dictionary<string, HashSet<string>>();
+            List<string> files = new List<string>(new HashSet<string>(getFilesAbsolutePath(folder, suffix)));
             for (int i = 0; i < files.Count; ) {
                 string args = "/DEPENDENTS";
                 int end = i + Math.Min(files.Count-i, 50); //每次最多分析50个模块
@@ -125,8 +219,59 @@ namespace cdos_dumpbin {
                         args += (" \"" + file + "\"");
                     }
                 }
-                //合并两个Dictionary
                 res = res.Concat(dumpbin(args)).ToDictionary(k => k.Key, v => v.Value);
+            }
+            return res;
+        }
+        /// <summary>
+        /// 分析DLL的依赖
+        /// </summary>
+        /// <param name="dlls"></param>
+        /// <returns></returns>
+        public static Dictionary<string, HashSet<string>> getDependencies(List<string> dllsPath) {
+            Dictionary<string, HashSet<string>> res = new Dictionary<string, HashSet<string>>();
+            for (int i = 0; i < dllsPath.Count; ) {
+                string args = "/DEPENDENTS";
+                int end = i + Math.Min(dllsPath.Count - i, 50); //每次最多分析50个模块
+                for (; i < end; ++i) {
+                    string dllPath = dllsPath[i].ToLower();
+                    if (!res.Keys.Contains(dllPath.Substring(dllPath.LastIndexOf('\\') + 1))) {
+                        args += (" \"" + dllPath + "\"");
+                    }
+                }
+                res = res.Concat(dumpbin(args)).ToDictionary(k => k.Key, v => v.Value);
+            }
+            return res;
+        }
+        /// <summary>
+        /// 分析DLL依赖
+        /// </summary>
+        /// <param name="mp"></param>
+        /// <param name="dlls"></param>
+        /// <returns></returns>
+        public static Dictionary<string, HashSet<string>> getDependencies(Dictionary<string, string> mp, List<string> dlls) {
+            Dictionary<string, HashSet<string>> res = new Dictionary<string, HashSet<string>>();
+            res.Add("404", new HashSet<string>());
+            for (int i = 0; i < dlls.Count; ) {
+                string args = "/DEPENDENTS";
+                int end = i + Math.Min(dlls.Count - i, 50); //每次最多分析50个模块
+                for (; i < end; ++i) {
+                    string dll = dlls[i].ToLower();
+                    if (dll.EndsWith("(?)")){
+                        continue;
+                    }
+                    if (mp.Keys.Contains(dll)) {
+                        if (!res.Keys.Contains(dll)){
+                            args += (" \"" + mp[dll] + "\"");
+                        }
+                    } else {
+                        res["404"].Add(dll+"(?)");
+                    }
+                }
+                res = res.Concat(dumpbin(args)).ToDictionary(k => k.Key, v => v.Value);
+            }
+            if (res["404"].Count <= 0) {
+                res.Remove("404");
             }
             return res;
         }
@@ -135,18 +280,18 @@ namespace cdos_dumpbin {
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        private static Dictionary<string, List<string>> dumpbin(string args) {
-            Dictionary<string, List<string>> res = new Dictionary<string, List<string>>();
+        private static Dictionary<string, HashSet<string>> dumpbin(string args) {
+            Dictionary<string, HashSet<string>> res = new Dictionary<string, HashSet<string>>();
             try {
                 Process process = new Process();
-                ProcessStartInfo startInfo = new ProcessStartInfo(getDumpbinPath(), args);
+                ProcessStartInfo startInfo = new ProcessStartInfo(getToolsPath(), args);
                 process.StartInfo = startInfo;
                 process.StartInfo.UseShellExecute = false;
                 startInfo.RedirectStandardInput = true;
                 startInfo.RedirectStandardOutput = true;
                 startInfo.CreateNoWindow = true;
                 process.Start();
-                res = getRecognizedDLL(process);
+                res = getRecognized(process);
                 process.WaitForExit();
                 process.Close();
             } catch (Exception e) {
@@ -160,15 +305,15 @@ namespace cdos_dumpbin {
         /// </summary>
         /// <param name="process"></param>
         /// <returns></returns>
-        private static Dictionary<string, List<string>> getRecognizedDLL(Process process) {
-            Dictionary<string, List<string>> res = new Dictionary<string,List<string>>();
+        private static Dictionary<string, HashSet<string>> getRecognized(Process process) {
+            Dictionary<string, HashSet<string>> res = new Dictionary<string, HashSet<string>>();
             for (string name = ""; !process.StandardOutput.EndOfStream; ) {
                 string line = process.StandardOutput.ReadLine().Trim().ToLower();
                 if (line.StartsWith("dump")) {
                     //获取被分析文件名称
                     name = line.Substring(line.LastIndexOf('\\') + 1);
                     if (!res.ContainsKey(name)) {
-                        res.Add(name, new List<string>());
+                        res.Add(name, new HashSet<string>());
                     }
                 } else if (line.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) {
                     res[name].Add(line);
@@ -183,32 +328,24 @@ namespace cdos_dumpbin {
         /// <param name="folder"></param>
         /// <param name="endsWith"></param>
         /// <returns></returns>
-        public static Dictionary<string, List<string>> getDLLDependenciesNoSelf(string folder, List<string> endsWith) {
-            Dictionary<string, List<string>> res = new Dictionary<string, List<string>>();
-            List<string> self = new List<string>(new HashSet<string>(getFilesPath(folder, new List<string>{".dll"})));
-            res = getDLLDependencies(folder, endsWith);
+        public static Dictionary<string, HashSet<string>> getDependenciesNoSelf(string folder, HashSet<string> suffix) {
+            Dictionary<string, HashSet<string>> res = new Dictionary<string, HashSet<string>>();
+            HashSet<string> self = getFilterName(folder, new HashSet<string> { ".dll" });
+            res = getDependencies(folder, suffix);
             foreach (var item in res) {//移除重复内容
-                for (var i = item.Value.Count - 1; i >= 0; --i) {
-                    //Console.WriteLine(item.Value[i]);
-                    if (self.Contains(item.Value[i])) {
-                        //Console.WriteLine("kill");
-                        item.Value.Remove(item.Value[i]);
-                    }
-                }
+                item.Value.ExceptWith(self);
             }
-
             return res;
         }
-
         /// <summary>
         /// 返回字典Values的交集
         /// </summary>
         /// <param name="dict"></param>
         /// <returns></returns>
-        public static List<string> getValuesListUnion(Dictionary<string, List<string>> dict) {
-            List<string> res = new List<string>();
+        public static HashSet<string> getValuesUnion(Dictionary<string, HashSet<string>> dict) {
+            HashSet<string> res = new HashSet<string>();
             foreach (var kv in dict) {
-                res = res.Union(kv.Value).ToList<string>();
+                res.UnionWith(kv.Value);
             }
             return res;
         }
@@ -222,7 +359,58 @@ namespace cdos_dumpbin {
                 sw.Write(data);
             }
         }
+        /// <summary>
+        /// 默认以map形式，递归路径
+        /// </summary>
+        /// <param name="endsWith"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> getRecMapAbsolutePath(HashSet<string> folder, HashSet<string> suffix) {
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            foreach (var s in folder) {
+                Dictionary<string, string> mp = getMapAbsolutePath(s, suffix);
+                foreach (var item in mp) {
+                    if (!res.ContainsKey(item.Key)) {
+                        res.Add(item.Key, item.Value);
+                    }
+                }
+            }
+            return res;
+        }
+        /// <summary>
+        /// 查询递归依赖
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
+        public static HashSet<string> getRecDependenciesNoSelf(string folder, HashSet<string> suffix) {
+            HashSet<string> res = getValuesUnion(getDependenciesNoSelf(folder, suffix));
+            HashSet<string> folders = new HashSet<string>();
+            folders.Add(@"C:\Windows\System32");
+            folders.Add(@"C:\Windows\winsxs");
+            folders.Add(folder);
+            Dictionary<string, string> mp = getRecMapAbsolutePath(folders, new HashSet<string>(new string[] { ".dll" }));
+            //Console.WriteLine(mp.Count);
+            //Console.WriteLine(string.Join(" ", mp.ToArray()));
+            List<string> dlls = new List<string>(res);
+            res.Clear();
+            for (; ; ) {
+                HashSet<string> layer = new HashSet<string>(res);
+                res.UnionWith(getValuesUnion(getDependencies(mp, dlls)));
+                if (!res.IsSubsetOf(layer)) {
+                    break;
+                }
+                dlls = new List<string>(res.Except<string>(layer));
+            }
 
+            HashSet<string> self = getFilterName(folder, new HashSet<string> { ".dll" });
+            foreach (var hs in self) {
+                //Console.WriteLine(hs);
+                res.Remove(hs + "(?)");
+            }
+
+            return res;
+        }
     }
 }
 
